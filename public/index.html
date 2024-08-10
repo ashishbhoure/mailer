@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Sender</title>
+  </head>
+  <body>
+    <h1>Send Emails</h1>
+    <form
+      id="emailForm"
+      action="/send-email"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <!-- Recipients Field -->
+      <label for="to">To (comma-separated emails):</label><br />
+      <input
+        type="text"
+        id="to"
+        name="to"
+        placeholder="Recipient Email"
+        required
+      /><br /><br />
+
+      <!-- Subject Field -->
+      <label for="subject">Subject:</label><br />
+      <input
+        type="text"
+        id="subject"
+        name="subject"
+        placeholder="Subject"
+        required
+      /><br /><br />
+
+      <!-- Text Message Field -->
+      <label for="text">Message (Text):</label><br />
+      <textarea
+        id="text"
+        name="text"
+        placeholder="Plain text email body"
+      ></textarea
+      ><br /><br />
+
+      <!-- HTML Message Field -->
+      <label for="html">Message (HTML):</label><br />
+      <textarea id="html" name="html" placeholder="HTML email body"></textarea
+      ><br /><br />
+
+      <!-- File Attachment Field -->
+      <label for="attachment">Attach a file:</label><br />
+      <input type="file" id="attachment" name="attachment" /><br /><br />
+
+      <!-- Submit Button -->
+      <button type="submit">Send Email</button>
+    </form>
+
+    <script>
+      const form = document.getElementById("emailForm");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        try {
+          const response = await fetch("/send-email", {
+            method: "POST",
+            body: formData,
+          });
+
+          const result = await response.json();
+          alert(result.message || result.error);
+        } catch (error) {
+          alert("Error sending email: " + error.message);
+        }
+      });
+    </script>
+  </body>
+</html>
