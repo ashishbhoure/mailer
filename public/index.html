@@ -70,7 +70,17 @@
             body: formData,
           });
 
-          const result = await response.json();
+          // Check if the response is JSON
+          const contentType = response.headers.get("Content-Type");
+          let result;
+
+          if (contentType && contentType.includes("application/json")) {
+            result = await response.json();
+          } else {
+            const text = await response.text();
+            result = { message: text };
+          }
+
           alert(result.message || result.error);
         } catch (error) {
           alert("Error sending email: " + error.message);
