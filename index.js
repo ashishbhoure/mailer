@@ -2,7 +2,6 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
 const multer = require("multer");
-const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -33,33 +32,40 @@ app.post("/send-email", upload.single("attachment"), async (req, res) => {
   const { to, subject, text, html } = req.body;
   const attachment = req.file; // The uploaded file
 
-  // Create mail options object
-  let mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: to, // Already a comma-separated string
-    subject: subject,
-    text: text,
-    html: html,
-  };
-
-  // If a file is attached, add it to the mailOptions
-  if (attachment) {
-    mailOptions.attachments = [
-      {
-        filename: attachment.originalname,
-        path: attachment.path,
-      },
-    ];
-  }
+  // Split the 'to' field by comma to get an array of email addresses
+  const recipients = to.split(",");
 
   try {
-    await transporter.sendMail(mailOptions);
-    res.status(200).send({ message: "Email sent successfully!" });
+    // Loop through each recipient and send an individual email
+    for (const recipient of recipients) {
+      let mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: recipient.trim(), // Trim to remove any extra spaces
+        subject: subject,
+        text: text,
+        html: html,
+      };
+
+      // If a file is attached, add it to the mailOptions
+      if (attachment) {
+        mailOptions.attachments = [
+          {
+            filename: attachment.originalname,
+            path: attachment.path,
+          },
+        ];
+      }
+
+      // Send the email to the current recipient
+      await transporter.sendMail(mailOptions);
+    }
+
+    res.status(200).send({ message: "Emails sent successfully!" });
   } catch (error) {
     console.error("Error sending email:", error);
     res
       .status(500)
-      .send({ error: "Failed to send email", details: error.message });
+      .send({ error: "Failed to send emails", details: error.message });
   }
 });
 
