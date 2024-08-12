@@ -56,11 +56,21 @@
       <button type="submit">Send Email</button>
     </form>
 
+    <!-- Loading Message -->
+    <div id="loading" style="display: none">
+      <div class="spinner"></div>
+      Sending emails, please wait...
+    </div>
+
     <script>
       const form = document.getElementById("emailForm");
+      const loading = document.getElementById("loading");
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        // Show the loading message
+        loading.style.display = "block";
 
         const formData = new FormData(form);
 
@@ -84,6 +94,9 @@
           alert(result.message || result.error);
         } catch (error) {
           alert("Error sending email: " + error.message);
+        } finally {
+          // Hide the loading message
+          loading.style.display = "none";
         }
       });
     </script>
