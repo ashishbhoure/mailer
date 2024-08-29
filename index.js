@@ -72,6 +72,6 @@ app.post("/send-email", upload.single("attachment"), async (req, res) => {
 // Start the server
 const PORT = process.env.PORT || 3000;
 const host = "3.140.254.81";
-app.listen(PORT,host () => {
+app.listen(PORT,host, () => {
   console.log(`Server is running on port ${PORT} ${host}`);
 });
